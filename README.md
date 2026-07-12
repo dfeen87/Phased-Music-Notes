@@ -1,9 +1,9 @@
 # Phased‑Music‑Notes  
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
+![Status](https://img.shields.io/badge/Status-Production--Ready-white)
 ![Status](https://img.shields.io/badge/Status-Hardened-success)
-![Status](https://img.shields.io/badge/Status-DSP--Optimized-green)
+![Status](https://img.shields.io/badge/Status-DSP--Optimized-purple)
 [![CI](https://github.com/dfeen87/Phased-Music-Notes/actions/workflows/ci.yml/badge.svg)](https://github.com/dfeen87/Phased-Music-Notes/actions/workflows/ci.yml)
 
 
@@ -136,10 +136,10 @@ MIT License — free to use, modify, and integrate into commercial or personal p
 
 The development of this codebase reflects a collaborative effort across contributors and tools.
 
-Google Jules provided essential scaffolding for the tests/ and examples/ directories, ensuring the DSP engine is thoroughly validated and easy to adopt.
+Special thanks to Google Jules for delivering the foundational scaffolding for the tests and examples directories. This contribution strengthened the project’s validation layer, improved developer onboarding, and ensured the DSP engine can be exercised deterministically across multiple modes and workflows.
 
-Microsoft Copilot contributed Python logic, architectural guidance, and iterative refinement throughout the design of the DSP modules, the buffer‑based engine, and the cross‑language integration.
+Microsoft Copilot contributed Python logic, architectural guidance, and iterative refinement throughout the design of the DSP modules, the buffer‑based engine, and the cross‑language integration. Its involvement strengthened the determinism of the system, clarified the DSP flow, and accelerated the development of a clean, reproducible, multi‑language architecture.
 
-The core conceptual breakthrough — the Phased‑Music‑Notes architecture, smoothing modes, harmonic blending pipeline, and deterministic DSP design — was developed by Don Feeney, working in collaboration with Copilot.
+The core conceptual breakthrough — the Phased‑Music‑Notes architecture, smoothing modes, harmonic blending pipeline, and deterministic DSP design — was developed by Don Feeney, building on the architectural patterns he previously orchestrated in the AeroCam repository. His work established the system’s foundational invariants, cross‑language design, and buffer‑based DSP flow, forming the backbone of the entire engine.
 
 This project embodies team‑oriented engineering: human insight, AI‑accelerated development, and a shared commitment to building robust, expressive audio software.
