@@ -2,6 +2,8 @@
 ![License](https://img.shields.io/github/license/dfeen87/Phased-Music-Notes?color=green)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Status](https://img.shields.io/badge/Status-Experimental-orange)
+[![CI](https://github.com/dfeen87/Phased-Music-Notes/actions/workflows/ci.yml/badge.svg)](https://github.com/dfeen87/Phased-Music-Notes/actions/workflows/ci.yml)
+
 
 ---
 
