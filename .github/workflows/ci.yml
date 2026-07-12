@@ -84,22 +84,40 @@ jobs:
       # ---------------------------------------------------------
       # JUCE + pybind11 FETCH
       # ---------------------------------------------------------
+      - name: Remove JUCE (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          Remove-Item -Recurse -Force drivers/JUCE
+
+      - name: Remove JUCE (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          rm -rf drivers/JUCE
+
       - name: Clone JUCE
         if: steps.cache-juce.outputs.cache-hit != 'true'
         run: |
-          rm -rf drivers/JUCE
           git clone --depth 1 https://github.com/juce-framework/JUCE.git drivers/JUCE
+
+      - name: Remove pybind11 (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          Remove-Item -Recurse -Force drivers/pybind11
+
+      - name: Remove pybind11 (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          rm -rf drivers/pybind11
 
       - name: Clone pybind11
         if: steps.cache-pybind11.outputs.cache-hit != 'true'
         run: |
-          rm -rf drivers/pybind11
           git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
       # Windows Toolchain Setup
       # ---------------------------------------------------------
-      - name: Configure MSVC Toolchain (Windows)
+      - name: Setup MSBuild
         if: matrix.os == 'windows-latest'
         uses: microsoft/setup-msbuild@v1.3.1
 
