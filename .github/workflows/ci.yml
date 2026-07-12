@@ -89,14 +89,12 @@ jobs:
         run: |
           rm -rf drivers/JUCE
           git clone --depth 1 https://github.com/juce-framework/JUCE.git drivers/JUCE
-        shell: bash
 
       - name: Clone pybind11
         if: steps.cache-pybind11.outputs.cache-hit != 'true'
         run: |
           rm -rf drivers/pybind11
           git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
-        shell: bash
 
       # ---------------------------------------------------------
       # Windows Toolchain Setup
