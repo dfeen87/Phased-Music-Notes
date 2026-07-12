@@ -75,10 +75,15 @@ Phased-Music-Notes/
 │   └── utils.py
 │
 ├── drivers/
-│   ├── cli.py               ← CLI driver
-│   ├── api.py               ← Python API driver
-│   └── vst_wrapper.cpp      ← DAW plugin driver (future)
-│
+│   ├── cli.py
+│   ├── api.py
+│   └── vst/
+│       ├── CMakeLists.txt
+│       ├── PluginProcessor.cpp
+│       ├── PluginEditor.cpp
+│       ├── python_bridge.cpp
+│       └── python_bridge.hpp
+│ 
 ├── examples/
 ├── tests/
 ├── LICENSE
