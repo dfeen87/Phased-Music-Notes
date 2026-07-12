@@ -124,3 +124,17 @@ Feel free to open issues, submit PRs, or propose new smoothing modes.
 
 ## 📜 License  
 MIT License — free to use, modify, and integrate into commercial or personal projects.
+
+---
+
+## 🙏 Acknowledgements
+
+The development of this codebase reflects a collaborative effort across contributors and tools.
+
+Google Jules provided essential scaffolding for the tests/ and examples/ directories, ensuring the DSP engine is thoroughly validated and easy to adopt.
+
+Microsoft Copilot contributed Python logic, architectural guidance, and iterative refinement throughout the design of the DSP modules, the buffer‑based engine, and the cross‑language integration.
+
+The core conceptual breakthrough — the Phased‑Music‑Notes architecture, smoothing modes, harmonic blending pipeline, and deterministic DSP design — was developed by Don Feeney, working in collaboration with Copilot.
+
+This project embodies team‑oriented engineering: human insight, AI‑accelerated development, and a shared commitment to building robust, expressive audio software.
