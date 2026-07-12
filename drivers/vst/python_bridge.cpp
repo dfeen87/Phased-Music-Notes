@@ -76,6 +76,22 @@ void process_audio(float* audioData,
 }
 
 // -------------------------------------------------------------
+// Update Python mode dynamically
+// -------------------------------------------------------------
+void update_python_mode(const std::string& mode)
+{
+    if (!g_python_initialized || !g_engine)
+        return;
+
+    try {
+        g_engine.attr("mode") = mode;
+        g_engine.attr("engine").attr("mode") = mode;
+    } catch (const py::error_already_set& e) {
+        fprintf(stderr, "Python update mode error: %s\n", e.what());
+    }
+}
+
+// -------------------------------------------------------------
 // Shutdown Python interpreter
 // -------------------------------------------------------------
 void shutdown_python()

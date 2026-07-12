@@ -1,9 +1,11 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <chrono>
 
 // Python bridge
 extern void init_python(int sampleRate, const std::string& mode);
 extern void process_audio(float* audioData, int numSamples, int numChannels);
+extern void update_python_mode(const std::string& mode);
 extern void shutdown_python();
 
 // ==============================================================================
@@ -42,6 +44,14 @@ void PhasedNotesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
 // ==============================================================================
 void PhasedNotesAudioProcessor::releaseResources()
 {
+#if JUCE_DEBUG
+    if (totalBlocksProcessed > 0)
+    {
+        double avg = (double)totalProcessingTimeMicroseconds / totalBlocksProcessed;
+        juce::Logger::writeToLog("PhasedNotes Profiling: Average DSP time per block: " + juce::String(avg) + " microseconds.");
+    }
+#endif
+
     shutdown_python();
 }
 
@@ -87,7 +97,15 @@ void PhasedNotesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // ---------------------------------------------------------
     // Call Python DSP
     // ---------------------------------------------------------
+    auto start = std::chrono::high_resolution_clock::now();
+
     process_audio(temp.data(), numSamples, numChannels);
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+
+    totalProcessingTimeMicroseconds += duration;
+    totalBlocksProcessed++;
 
     // ---------------------------------------------------------
     // Copy back into JUCE buffer
@@ -126,6 +144,13 @@ void PhasedNotesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 void PhasedNotesAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
     juce::ignoreUnused(data, sizeInBytes);
+}
+
+// ==============================================================================
+void PhasedNotesAudioProcessor::setMode(const std::string& mode)
+{
+    currentMode = mode;
+    update_python_mode(mode);
 }
 
 // ==============================================================================

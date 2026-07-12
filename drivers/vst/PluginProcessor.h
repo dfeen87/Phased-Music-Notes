@@ -50,5 +50,9 @@ public:
 private:
     std::string currentMode = "velvet";
 
+    // Profiling variables
+    long long totalProcessingTimeMicroseconds = 0;
+    long long totalBlocksProcessed = 0;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PhasedNotesAudioProcessor)
 };

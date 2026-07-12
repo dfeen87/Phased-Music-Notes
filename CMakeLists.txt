@@ -62,3 +62,11 @@ target_link_libraries(PhasedNotes PRIVATE
 # C++ standard
 # ================================================================
 target_compile_features(PhasedNotes PRIVATE cxx_std_17)
+
+# ================================================================
+# Post-build properties / specific platforms
+# ================================================================
+# Avoid AU validation errors on non-macOS systems (JUCE handles most of it, but just in case)
+if(NOT APPLE)
+    # Remove AU format if not on macOS, though juce_add_plugin gracefully handles it
+endif()

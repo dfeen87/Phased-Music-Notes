@@ -17,8 +17,8 @@ private:
 
     // ============================================================
     // GUI components
-    juce::ComboBox modeBox;   // <-- THIS FIXES YOUR CI ERROR
-    juce::Label modeLabel;    // optional, but recommended
+    juce::ComboBox modeBox;
+    juce::Label modeLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PhasedNotesAudioProcessorEditor)
 };
