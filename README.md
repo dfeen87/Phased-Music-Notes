@@ -3,6 +3,7 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
 ![Status](https://img.shields.io/badge/Status-Hardened-success)
+![Status](https://img.shields.io/badge/Status-DSP--Optimized-green)
 [![CI](https://github.com/dfeen87/Phased-Music-Notes/actions/workflows/ci.yml/badge.svg)](https://github.com/dfeen87/Phased-Music-Notes/actions/workflows/ci.yml)
 
 
