@@ -104,10 +104,18 @@ jobs:
       - name: Install CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '3.21.x'
+          cmake-version: '3.24.x'
 
       - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+              cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
+          elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+              cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
+          else
+              cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS="VST3;AU"
+          fi
 
       - name: Build
         run: cmake --build build --config Release
