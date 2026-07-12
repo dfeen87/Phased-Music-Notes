@@ -5,7 +5,8 @@ project(PhasedNotes VERSION 1.0.0)
 # Disable VST2 BEFORE JUCE is added
 # ================================================================
 set(JUCE_BUILD_VST2 OFF CACHE BOOL "" FORCE)
-set(JUCE_ENABLE_MODULE_SOURCE_GROUPS OFF CACHE BOOL "" FORCE)
+set(JUCE_PLUGINHOST_VST OFF CACHE BOOL "" FORCE)
+set(JUCE_PLUGINHOST_VST3 ON CACHE BOOL "" FORCE)
 
 # ================================================================
 # JUCE + pybind11
