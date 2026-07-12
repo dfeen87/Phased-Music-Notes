@@ -24,11 +24,14 @@ public:
 
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
-    bool hasEditor() const override { return true; }
+    bool hasEditor() const override;
 
     //==============================================================================
     const juce::String getName() const override;
-    bool hasEditor() const override;
+
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
+    double getTailLengthSeconds() const override;
 
     void getStateInformation(juce::MemoryBlock&) override;
     void setStateInformation(const void*, int) override;
@@ -39,10 +42,6 @@ public:
     void setCurrentProgram(int) override {}
     const juce::String getProgramName(int) override { return {}; }
     void changeProgramName(int, const juce::String&) override {}
-
-    //==============================================================================
-    void getStateInformation(juce::MemoryBlock&) override {}
-    void setStateInformation(const void*, int) override {}
 
     //==============================================================================
     // Called by PluginEditor to switch DSP modes
