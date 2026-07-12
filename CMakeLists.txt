@@ -35,37 +35,32 @@ juce_add_plugin(PhasedNotes
     PRODUCT_NAME "PhasedNotes"
 )
 
-# JUCE generates PhasedNotes_VST3 on Linux
-set(PLUGIN_TARGET PhasedNotes_VST3)
+# ================================================================
+# Attach plugin sources to ALL JUCE-generated targets
+# ================================================================
+get_target_property(JUCE_TARGETS PhasedNotes JUCE_PLUGIN_TARGETS)
 
-# ================================================================
-# Source files
-# ================================================================
-target_sources(${PLUGIN_TARGET} PRIVATE
-    drivers/vst/PluginProcessor.cpp
-    drivers/vst/PluginProcessor.h
-    drivers/vst/PluginEditor.cpp
-    drivers/vst/PluginEditor.h
-    drivers/vst/python_bridge.cpp
-    drivers/vst/python_bridge.hpp
-)
+foreach(target ${JUCE_TARGETS})
+    target_sources(${target} PRIVATE
+        drivers/vst/PluginProcessor.cpp
+        drivers/vst/PluginProcessor.h
+        drivers/vst/PluginEditor.cpp
+        drivers/vst/PluginEditor.h
+        drivers/vst/python_bridge.cpp
+        drivers/vst/python_bridge.hpp
+    )
 
-# ================================================================
-# Include directories
-# ================================================================
-target_include_directories(${PLUGIN_TARGET} PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/vst
-    ${CMAKE_CURRENT_SOURCE_DIR}/drivers
-)
+    target_include_directories(${target} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/drivers/vst
+        ${CMAKE_CURRENT_SOURCE_DIR}/drivers
+    )
 
-# ================================================================
-# Link libraries
-# ================================================================
-target_link_libraries(${PLUGIN_TARGET} PRIVATE
-    juce::juce_audio_utils
-    juce::juce_audio_processors
-    juce::juce_dsp
-    pybind11::embed
-)
+    target_link_libraries(${target} PRIVATE
+        juce::juce_audio_utils
+        juce::juce_audio_processors
+        juce::juce_dsp
+        pybind11::embed
+    )
 
-target_compile_features(${PLUGIN_TARGET} PRIVATE cxx_std_17)
+    target_compile_features(${target} PRIVATE cxx_std_17)
+endforeach()
