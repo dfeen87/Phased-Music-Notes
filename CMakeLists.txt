@@ -36,11 +36,18 @@ juce_add_plugin(PhasedNotes
 )
 
 # ================================================================
-# Attach plugin sources to ALL JUCE-generated targets
+# Enumerate JUCE targets manually (bulletproof)
 # ================================================================
-get_target_property(JUCE_TARGETS PhasedNotes JUCE_PLUGIN_TARGETS)
+set(PMN_TARGETS PhasedNotes_VST3)
 
-foreach(target ${JUCE_TARGETS})
+if(APPLE)
+    list(APPEND PMN_TARGETS PhasedNotes_AU)
+endif()
+
+# ================================================================
+# Attach sources to ALL plugin targets
+# ================================================================
+foreach(target ${PMN_TARGETS})
     target_sources(${target} PRIVATE
         drivers/vst/PluginProcessor.cpp
         drivers/vst/PluginProcessor.h
