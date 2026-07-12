@@ -33,7 +33,13 @@ juce_add_plugin(PhasedNotes
     PLUGIN_CODE PNts
     FORMATS ${PLUGIN_FORMATS}
     PRODUCT_NAME "PhasedNotes"
+    VST3_CAN_REPLACE_VST2 FALSE
 )
+
+# ================================================================
+# Disable VST2 replacement BEFORE JUCE generates client code
+# ================================================================
+target_compile_definitions(PhasedNotes PUBLIC JUCE_VST3_CAN_REPLACE_VST2=0)
 
 # ================================================================
 # Enumerate JUCE targets manually (bulletproof)
