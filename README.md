@@ -85,6 +85,7 @@ Phased-Music-Notes/
 │       ├── PluginProcessor.cpp
 │       ├── PluginProcessor.h
 │       ├── PluginEditor.cpp
+│       ├── PluginEditor.h
 │       ├── python_bridge.cpp
 │       └── python_bridge.hpp
 │ 
