@@ -30,6 +30,26 @@ jobs:
             echo "No requirements.txt found, skipping."
           fi
 
+      # ---------------------------------------------------------
+      # JUCE + pybind11 FETCH (Fixes your CMake errors)
+      # ---------------------------------------------------------
+
+      - name: Prepare JUCE directory
+        run: mkdir -p drivers/JUCE
+
+      - name: Clone JUCE
+        run: git clone --depth 1 https://github.com/juce-framework/JUCE.git drivers/JUCE
+
+      - name: Prepare pybind11 directory
+        run: mkdir -p drivers/pybind11
+
+      - name: Clone pybind11
+        run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
+
+      # ---------------------------------------------------------
+      # CMake Build
+      # ---------------------------------------------------------
+
       - name: Install CMake
         uses: jwlawson/actions-setup-cmake@v1
 
@@ -38,6 +58,10 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release
+
+      # ---------------------------------------------------------
+      # Python Tests
+      # ---------------------------------------------------------
 
       - name: Run Python tests
         run: pytest -q
