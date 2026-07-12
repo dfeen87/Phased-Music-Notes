@@ -2,54 +2,50 @@
 Phased-Music-Notes
 Smooth Audio Notes with phase-aligned transitions.
 
-This main file initializes the smoothing engine, loads audio,
-detects note boundaries, applies harmonic blending, and outputs
-a softened, gradual version of the track.
+This engine mirrors the deterministic architecture of AeroCam:
+Analyzer → Smoother → Harmonic Blender → Output.
 
 MIT License
 """
 
+import soundfile as sf
 from phased_music_notes.analyzer import NoteAnalyzer
 from phased_music_notes.smoother import PhaseSmoother
 from phased_music_notes.harmonics import HarmonicBlender
-from phased_music_notes.dsl import SmoothPhase
-import soundfile as sf
 
 
-def process_audio(input_path: str, output_path: str, mode: str = "velvet"):
+class PhasedMusicEngine:
     """
-    Core processing pipeline:
-    1. Load audio
-    2. Analyze note boundaries
-    3. Apply smoothing + harmonic blending
-    4. Save softened output
+    Static-style engine inspired by AeroCam's main.cpp.
+    Modules are initialized once, mirroring embedded-style determinism.
     """
 
-    # Load audio
-    audio, sr = sf.read(input_path)
+    def __init__(self, mode="velvet"):
+        self.mode = mode
+        self.analyzer = NoteAnalyzer()
+        self.smoother = PhaseSmoother(mode=mode)
+        self.harmonics = HarmonicBlender()
 
-    # Initialize components
-    analyzer = NoteAnalyzer(sr=sr)
-    smoother = PhaseSmoother(mode=mode)
-    harmonics = HarmonicBlender()
+    def smooth_file(self, input_path: str, output_path: str):
+        # Load audio
+        audio, sr = sf.read(input_path)
 
-    # Detect note boundaries
-    boundaries = analyzer.detect_boundaries(audio)
+        # Step 1: Detect note boundaries
+        boundaries = self.analyzer.detect_boundaries(audio, sr)
 
-    # Apply smoothing
-    softened = smoother.apply(audio, boundaries)
+        # Step 2: Apply smoothing per boundary region
+        softened = self.smoother.apply(audio, boundaries)
 
-    # Blend harmonics for gradual transitions
-    final_output = harmonics.blend(softened)
+        # Step 3: Blend harmonics for gradual transitions
+        final_output = self.harmonics.blend(softened, sr)
 
-    # Save result
-    sf.write(output_path, final_output, sr)
+        # Step 4: Save output
+        sf.write(output_path, final_output, sr)
 
-    print(f"Phased-Music-Notes: '{mode}' smoothing applied.")
-    print(f"Output saved to: {output_path}")
+        print(f"[Phased-Music-Notes] Mode '{self.mode}' applied.")
+        print(f"Output saved to {output_path}")
 
 
 if __name__ == "__main__":
-    # Example usage of the DSL-style interface
-    engine = SmoothPhase(mode="velvet")
+    engine = PhasedMusicEngine(mode="velvet")
     engine.smooth_file("input.wav", "output_smooth.wav")
