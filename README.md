@@ -85,7 +85,15 @@ Phased-Music-Notes/
 │       └── python_bridge.hpp
 │ 
 ├── examples/
-├── tests/
+│
+├──tests/
+│    │
+│    ├── test_analyzer.py
+│    ├── test_smoother.py
+│    ├── test_harmonics.py
+│    ├── test_engine_integration.py
+│    └── test_utils.py
+│ 
 ├── LICENSE
 └── README.md
 
