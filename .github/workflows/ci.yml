@@ -31,9 +31,29 @@ jobs:
           fi
 
       # ---------------------------------------------------------
-      # JUCE + pybind11 FETCH (Fixes your CMake errors)
+      # JUCE Linux Dependencies (Fixes X11, GTK, WebKit errors)
       # ---------------------------------------------------------
+      - name: Install JUCE Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxcomposite-dev \
+            libxext-dev \
+            libfreetype6-dev \
+            libfontconfig1-dev \
+            libcurl4-openssl-dev \
+            libasound2-dev \
+            libgtk-3-dev \
+            webkit2gtk-4.0 \
+            pkg-config
 
+      # ---------------------------------------------------------
+      # JUCE + pybind11 FETCH (Clean + Guaranteed to Work)
+      # ---------------------------------------------------------
       - name: Remove existing JUCE directory (if any)
         run: rm -rf drivers/JUCE
 
@@ -49,7 +69,6 @@ jobs:
       # ---------------------------------------------------------
       # CMake Build
       # ---------------------------------------------------------
-
       - name: Install CMake
         uses: jwlawson/actions-setup-cmake@v1
 
@@ -62,6 +81,5 @@ jobs:
       # ---------------------------------------------------------
       # Python Tests
       # ---------------------------------------------------------
-
       - name: Run Python tests
         run: pytest -q
