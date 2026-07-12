@@ -98,10 +98,18 @@ class PhaseSmoother:
             if len(left) == 0 or len(right) == 0:
                 continue
 
-            curve = self._blend_curve(len(left), len(right))
-            blended = left * (1 - curve) + right * curve
+            n = min(len(left), len(right))
+            curve = self._blend_curve(n, n)
 
-            out[start:end] = blended
+            # Create copies so we don't mutate while reading
+            l_slice = left[-n:].copy()
+            r_slice = right[:n].copy()
+
+            # Smooth left side
+            out[b - n : b] = l_slice * (1 - curve) + r_slice * curve
+
+            # Smooth right side
+            out[b : b + n] = l_slice * (1 - curve[::-1]) + r_slice * curve[::-1]
 
         return out
 

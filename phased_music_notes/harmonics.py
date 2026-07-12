@@ -93,6 +93,10 @@ class HarmonicBlender:
         frames_out = np.fft.irfft(spectrum_blended, axis=1)
         audio_out = self._overlap_add(frames_out, hop)
 
+        # Pad or truncate to match original length exactly
+        if len(audio_out) < len(audio):
+            pad_len = len(audio) - len(audio_out)
+            audio_out = np.pad(audio_out, (0, pad_len))
         return audio_out[: len(audio)]
 
     # -------------------------------------------------------------
