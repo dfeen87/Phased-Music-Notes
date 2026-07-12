@@ -37,10 +37,10 @@ This project explores a new idea:
 
 ## 📦 Installation  
 ```bash
-pip install phased-music-notes
+pip install -e .
 ```
 
-(Placeholder — update once published.)
+This installs the Python DSP utilities and the pybind11 bridge directly from the repository.
 
 ---
 
