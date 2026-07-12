@@ -64,8 +64,9 @@ Modes you might implement:
 ```
 phased-music-notes/
 │
-├── phased_music_notes/
+├── src/
 │   ├── analyzer.py
+│   ├── main.py
 │   ├── smoother.py
 │   ├── harmonics.py
 │   ├── dsl.py
