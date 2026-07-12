@@ -62,20 +62,28 @@ Modes you might implement:
 
 ## 📁 Project Structure  
 ```
-phased-music-notes/
+Phased-Music-Notes/
 │
 ├── src/
+│   └── main.py              ← core engine (AeroCam-style)
+│
+├── phased_music_notes/
 │   ├── analyzer.py
-│   ├── main.py
 │   ├── smoother.py
 │   ├── harmonics.py
 │   ├── dsl.py
 │   └── utils.py
 │
+├── drivers/
+│   ├── cli.py               ← CLI driver
+│   ├── api.py               ← Python API driver
+│   └── vst_wrapper.cpp      ← DAW plugin driver (future)
+│
 ├── examples/
 ├── tests/
 ├── LICENSE
 └── README.md
+
 ```
 
 ---
