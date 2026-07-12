@@ -37,11 +37,6 @@ juce_add_plugin(PhasedNotes
 )
 
 # ================================================================
-# Disable VST2 replacement BEFORE JUCE generates client code
-# ================================================================
-target_compile_definitions(PhasedNotes PUBLIC JUCE_VST3_CAN_REPLACE_VST2=0)
-
-# ================================================================
 # Enumerate JUCE targets manually (bulletproof)
 # ================================================================
 set(PMN_TARGETS PhasedNotes_VST3)
@@ -76,4 +71,5 @@ foreach(target ${PMN_TARGETS})
     )
 
     target_compile_features(${target} PRIVATE cxx_std_17)
+    target_compile_definitions(${target} PUBLIC JUCE_VST3_CAN_REPLACE_VST2=0)
 endforeach()
