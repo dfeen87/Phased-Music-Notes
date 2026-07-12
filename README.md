@@ -1,7 +1,8 @@
 # Phased‑Music‑Notes  
-![License](https://img.shields.io/github/license/dfeen87/Phased-Music-Notes?color=green)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Status](https://img.shields.io/badge/Status-Experimental-orange)
+![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
+![Status](https://img.shields.io/badge/Status-Hardened-success)
 [![CI](https://github.com/dfeen87/Phased-Music-Notes/actions/workflows/ci.yml/badge.svg)](https://github.com/dfeen87/Phased-Music-Notes/actions/workflows/ci.yml)
 
 
