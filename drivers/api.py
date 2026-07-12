@@ -1,47 +1,118 @@
 """
 Python API driver for Phased-Music-Notes.
 
-This module provides a clean, producer-friendly interface:
-    from phased_music_notes import smooth
-    smooth("input.wav", "output.wav", mode="velvet")
+Provides:
+    - smooth(): one-call file-based interface
+    - PhasedNotes: OO file-based interface
+    - PhasedNotesBuffer: buffer-based interface for DAW/VST integration
 
 It wraps the core engine in src/main.py so users never need
 to touch internal DSP modules directly.
 """
 
 from pathlib import Path
+from typing import Union
+
+import numpy as np
+
 from src.main import PhasedMusicEngine
 
 
-def smooth(input_path: str, output_path: str, mode: str = "velvet") -> None:
+# ----------------------------------------------------------------------
+# File-based functional API
+# ----------------------------------------------------------------------
+def smooth(input_path: Union[str, Path],
+           output_path: Union[str, Path],
+           mode: str = "velvet") -> None:
     """
     Smooth Audio Notes with a single function call.
 
     Parameters
     ----------
-    input_path : str
+    input_path : str or Path
         Path to the input audio file.
-    output_path : str
+    output_path : str or Path
         Path where the smoothed audio will be saved.
     mode : str
         Smoothing mode (e.g., velvet, legato, melt).
     """
+    input_path = Path(input_path)
+    output_path = Path(output_path)
 
     engine = PhasedMusicEngine(mode=mode)
-    engine.smooth_file(input_path, output_path)
+    engine.smooth_file(str(input_path), str(output_path))
 
 
+# ----------------------------------------------------------------------
+# File-based OO API
+# ----------------------------------------------------------------------
 class PhasedNotes:
     """
-    Object-oriented API wrapper for more advanced users.
+    Object-oriented API wrapper for file-based processing.
 
-    Example:
+    Example
+    -------
         pn = PhasedNotes(mode="melt")
         pn.process("piano.wav", "piano_soft.wav")
     """
 
     def __init__(self, mode: str = "velvet"):
+        self.mode = mode
         self.engine = PhasedMusicEngine(mode=mode)
 
-    def process(self, input_path: str, output_path: str) -> None:
-        self.engine.smooth_file(input_path, output_path)
+    def process(self,
+                input_path: Union[str, Path],
+                output_path: Union[str, Path]) -> None:
+        input_path = Path(input_path)
+        output_path = Path(output_path)
+        self.engine.smooth_file(str(input_path), str(output_path))
+
+
+# ----------------------------------------------------------------------
+# Buffer-based API for DAW/VST integration
+# ----------------------------------------------------------------------
+class PhasedNotesBuffer:
+    """
+    Buffer-based DSP driver for DAW/VST integration.
+
+    This class is intended to be called from a C++/pybind11 bridge,
+    where audio buffers are passed as NumPy arrays.
+
+    Example (Python-side)
+    ---------------------
+        pnb = PhasedNotesBuffer(mode="velvet", sr=44100)
+        out = pnb.process_buffer(audio_np)
+    """
+
+    def __init__(self, mode: str = "velvet", sr: int = 44100):
+        self.mode = mode
+        self.sr = sr
+        self.engine = PhasedMusicEngine(mode=mode)
+
+    def process_buffer(self, audio_buffer: np.ndarray) -> np.ndarray:
+        """
+        Process a NumPy audio buffer.
+
+        Parameters
+        ----------
+        audio_buffer : np.ndarray
+            Shape: (num_samples,) or (num_samples, num_channels)
+
+        Returns
+        -------
+        np.ndarray
+            Smoothed audio buffer with the same shape.
+        """
+        # Ensure we’re working with a NumPy array
+        audio_buffer = np.asarray(audio_buffer)
+
+        # Step 1: Detect note boundaries
+        boundaries = self.engine.analyzer.detect_boundaries(audio_buffer, self.sr)
+
+        # Step 2: Apply smoothing per boundary region
+        softened = self.engine.smoother.apply(audio_buffer, boundaries)
+
+        # Step 3: Blend harmonics for gradual transitions
+        final_output = self.engine.harmonics.blend(softened, self.sr)
+
+        return final_output
