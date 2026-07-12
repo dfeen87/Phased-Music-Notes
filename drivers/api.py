@@ -11,7 +11,7 @@ to touch internal DSP modules directly.
 """
 
 from pathlib import Path
-from typing import Union
+from typing import Union, BinaryIO
 
 import numpy as np
 
@@ -21,26 +21,29 @@ from src.main import PhasedMusicEngine
 # ----------------------------------------------------------------------
 # File-based functional API
 # ----------------------------------------------------------------------
-def smooth(input_path: Union[str, Path],
-           output_path: Union[str, Path],
+def smooth(input_path: Union[str, Path, BinaryIO],
+           output_path: Union[str, Path, BinaryIO],
            mode: str = "velvet") -> None:
     """
     Smooth Audio Notes with a single function call.
 
     Parameters
     ----------
-    input_path : str or Path
+    input_path : str, Path, or file-like object
         Path to the input audio file.
-    output_path : str or Path
+    output_path : str, Path, or file-like object
         Path where the smoothed audio will be saved.
     mode : str
         Smoothing mode (e.g., velvet, legato, melt).
     """
-    input_path = Path(input_path)
-    output_path = Path(output_path)
+    # Only convert to string if it is a Path object, to allow file-like objects
+    if isinstance(input_path, Path):
+        input_path = str(input_path)
+    if isinstance(output_path, Path):
+        output_path = str(output_path)
 
     engine = PhasedMusicEngine(mode=mode)
-    engine.smooth_file(str(input_path), str(output_path))
+    engine.smooth_file(input_path, output_path)
 
 
 # ----------------------------------------------------------------------
@@ -61,11 +64,13 @@ class PhasedNotes:
         self.engine = PhasedMusicEngine(mode=mode)
 
     def process(self,
-                input_path: Union[str, Path],
-                output_path: Union[str, Path]) -> None:
-        input_path = Path(input_path)
-        output_path = Path(output_path)
-        self.engine.smooth_file(str(input_path), str(output_path))
+                input_path: Union[str, Path, BinaryIO],
+                output_path: Union[str, Path, BinaryIO]) -> None:
+        if isinstance(input_path, Path):
+            input_path = str(input_path)
+        if isinstance(output_path, Path):
+            output_path = str(output_path)
+        self.engine.smooth_file(input_path, output_path)
 
 
 # ----------------------------------------------------------------------

@@ -66,6 +66,7 @@ def test_harmonic_blender_stereo():
     blended = blender.blend(signal_stereo, sr)
 
     assert signal_stereo.shape == blended.shape
+    assert blended.shape[1] == 2, "Stereo array must have shape (numSamples, 2)"
 
     win_samples = blender._ms_to_samples(blender.window_ms, sr)
     hop = win_samples // 2

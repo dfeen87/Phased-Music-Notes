@@ -1,3 +1,4 @@
+import io
 import numpy as np
 import soundfile as sf
 import time
@@ -38,11 +39,12 @@ def main():
 
     end_time = time.time()
 
-    output_path = "buffer_output.wav"
-    sf.write(output_path, output_buffer, sr)
+    # Use an in-memory buffer to simulate disk write
+    out_buffer = io.BytesIO()
+    sf.write(out_buffer, output_buffer, sr, format='WAV')
 
     print(f"Processed output shape: {output_buffer.shape}")
-    print(f"Output saved to: {output_path}")
+    print(f"Output saved to memory buffer (size {out_buffer.getbuffer().nbytes} bytes)")
     print(f"Buffer processing time: {(end_time - start_time) * 1000:.2f} ms")
 
 if __name__ == "__main__":

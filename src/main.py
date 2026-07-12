@@ -26,7 +26,11 @@ class PhasedMusicEngine:
         self.smoother = PhaseSmoother(mode=mode)
         self.harmonics = HarmonicBlender()
 
-    def smooth_file(self, input_path: str, output_path: str):
+    def smooth_file(self, input_path, output_path):
+        """
+        Process audio from input_path to output_path.
+        Supports both string file paths and file-like objects (e.g. io.BytesIO).
+        """
         # Load audio
         audio, sr = sf.read(input_path)
 
@@ -40,10 +44,19 @@ class PhasedMusicEngine:
         final_output = self.harmonics.blend(softened, sr)
 
         # Step 4: Save output
-        sf.write(output_path, final_output, sr)
+        # If output_path is a file-like object without a format specified, default to WAV format
+        if hasattr(output_path, "write"):
+            sf.write(output_path, final_output, sr, format='WAV')
+        else:
+            sf.write(output_path, final_output, sr)
 
         print(f"[Phased-Music-Notes] Mode '{self.mode}' applied.")
-        print(f"Output saved to {output_path}")
+        if hasattr(output_path, "name"):
+            print(f"Output saved to {output_path.name}")
+        elif isinstance(output_path, str):
+            print(f"Output saved to {output_path}")
+        else:
+            print(f"Output saved to memory buffer.")
 
 
 if __name__ == "__main__":
