@@ -85,6 +85,10 @@ Phased-Music-Notes/
 │       └── python_bridge.hpp
 │ 
 ├── examples/
+│       ├── smooth_file.py
+│       ├── smooth_buffer.py
+│       ├── compare_modes.py
+│       └── vst_debug_roundtrip.py
 │
 ├──tests/
 │    │
