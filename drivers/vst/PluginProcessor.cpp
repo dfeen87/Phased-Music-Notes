@@ -32,6 +32,29 @@ const juce::String PhasedNotesAudioProcessor::getName() const
     return JucePlugin_Name;
 }
 
+bool PhasedNotesAudioProcessor::acceptsMidi() const
+{
+#if JucePlugin_WantsMidiInput
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool PhasedNotesAudioProcessor::producesMidi() const
+{
+#if JucePlugin_ProducesMidiOutput
+    return true;
+#else
+    return false;
+#endif
+}
+
+double PhasedNotesAudioProcessor::getTailLengthSeconds() const
+{
+    return 0.0;
+}
+
 // ==============================================================================
 void PhasedNotesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
