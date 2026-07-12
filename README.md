@@ -82,7 +82,6 @@ Phased-Music-Notes/
 │   ├── cli.py
 │   ├── api.py
 │   └── vst/
-│       ├── CMakeLists.txt
 │       ├── PluginProcessor.cpp
 │       ├── PluginEditor.cpp
 │       ├── python_bridge.cpp
@@ -102,6 +101,7 @@ Phased-Music-Notes/
 │    ├── test_engine_integration.py
 │    └── test_utils.py
 │
+├── CMakeLists.txt
 ├── requirements.txt
 ├── LICENSE
 └── README.md
