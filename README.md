@@ -83,6 +83,7 @@ Phased-Music-Notes/
 │   ├── api.py
 │   └── vst/
 │       ├── PluginProcessor.cpp
+│       ├── PluginProcessor.h
 │       ├── PluginEditor.cpp
 │       ├── python_bridge.cpp
 │       └── python_bridge.hpp
