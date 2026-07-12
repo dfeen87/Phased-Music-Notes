@@ -15,9 +15,7 @@ can extend it with more advanced musical constructs later.
 
 from __future__ import annotations
 from pathlib import Path
-from typing import Union
-
-from src.main import PhasedMusicEngine
+from typing import Union, BinaryIO
 
 
 class SmoothPhase:
@@ -37,6 +35,7 @@ class SmoothPhase:
     VALID_MODES = {"velvet", "legato", "melt"}
 
     def __init__(self, mode: str = "velvet"):
+        from src.main import PhasedMusicEngine
         mode = mode.lower()
         if mode not in self.VALID_MODES:
             raise ValueError(f"Unknown SmoothPhase mode: {mode}")
@@ -48,16 +47,19 @@ class SmoothPhase:
     # File-based smoothing
     # -------------------------------------------------------------
     def smooth_file(self,
-                    input_path: Union[str, Path],
-                    output_path: Union[str, Path]) -> None:
+                    input_path: Union[str, Path, BinaryIO],
+                    output_path: Union[str, Path, BinaryIO]) -> None:
         """
         Smooth an audio file using the selected DSL mode.
+        Supports file paths as well as in-memory BytesIO buffers.
         """
 
-        input_path = Path(input_path)
-        output_path = Path(output_path)
+        if isinstance(input_path, Path):
+            input_path = str(input_path)
+        if isinstance(output_path, Path):
+            output_path = str(output_path)
 
-        self.engine.smooth_file(str(input_path), str(output_path))
+        self.engine.smooth_file(input_path, output_path)
 
     # -------------------------------------------------------------
     # Mode switching
@@ -66,6 +68,7 @@ class SmoothPhase:
         """
         Change smoothing mode dynamically.
         """
+        from src.main import PhasedMusicEngine
         mode = mode.lower()
         if mode not in self.VALID_MODES:
             raise ValueError(f"Unknown SmoothPhase mode: {mode}")

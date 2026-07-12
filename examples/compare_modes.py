@@ -1,3 +1,4 @@
+import io
 import numpy as np
 import soundfile as sf
 from drivers.api import PhasedNotesBuffer
@@ -39,10 +40,10 @@ def main():
         pnb = PhasedNotesBuffer(mode=mode, sr=sr)
         output = pnb.process_buffer(signal)
 
-        # Save output
-        out_path = f"compare_{mode}.wav"
-        sf.write(out_path, output, sr)
-        print(f"Saved {out_path}")
+        # Use an in-memory buffer to simulate disk write
+        out_buffer = io.BytesIO()
+        sf.write(out_buffer, output, sr, format='WAV')
+        print(f"Processed mode '{mode}' and wrote to memory buffer (size {out_buffer.getbuffer().nbytes} bytes)")
 
         # Calculate centroid of the first channel
         centroid = compute_spectral_centroid(output[:, 0], sr)
