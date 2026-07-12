@@ -21,12 +21,17 @@ PhasedNotesAudioProcessorEditor::PhasedNotesAudioProcessorEditor(PhasedNotesAudi
         if (id == 3) mode = "melt";
 
         processorRef.setMode(mode);
+        modeLabel.setText("Current Mode: " + juce::String(mode), juce::dontSendNotification);
     };
 
     modeBox.setSelectedId(1);
     addAndMakeVisible(modeBox);
 
-    setSize(300, 120);
+    modeLabel.setText("Current Mode: velvet", juce::dontSendNotification);
+    modeLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(modeLabel);
+
+    setSize(300, 150);
 }
 
 // ==============================================================================
@@ -46,4 +51,5 @@ void PhasedNotesAudioProcessorEditor::paint(juce::Graphics& g)
 void PhasedNotesAudioProcessorEditor::resized()
 {
     modeBox.setBounds(50, 50, 200, 30);
+    modeLabel.setBounds(50, 90, 200, 30);
 }

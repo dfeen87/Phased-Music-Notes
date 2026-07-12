@@ -11,5 +11,8 @@ void process_audio(float* audioData,
                    int numSamples,
                    int numChannels);
 
+// Update Python mode dynamically
+void update_python_mode(const std::string& mode);
+
 // Shutdown Python interpreter
 void shutdown_python();
