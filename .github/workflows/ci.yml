@@ -101,7 +101,7 @@ jobs:
       # ---------------------------------------------------------
       - name: Configure MSVC Toolchain (Windows)
         if: matrix.os == 'windows-latest'
-        uses: ilammy/msvc-dev@v1
+        uses: microsoft/setup-msbuild@v1.3.1
 
       - name: Configure CMake (Windows)
         if: matrix.os == 'windows-latest'
