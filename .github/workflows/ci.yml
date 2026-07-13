@@ -77,13 +77,37 @@ jobs:
         run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # WINDOWS BUILD — REAL CMD (cmd /C) + FULL MINGW/MSYS PURGE
+      # WINDOWS BUILD — FLAT CMD (NO LOOPS, NO DELAYED EXPANSION)
       # ---------------------------------------------------------
-      - name: Windows Build (Real CMD Script)
+      - name: Windows Build (Flat CMD)
         if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: cmd.exe /c "%GITHUB_WORKSPACE%\windows_build.cmd"
-        
+        shell: cmd
+        run: |
+          echo Purging MinGW...
+          set PATH=%PATH:C:\mingw64\bin;=%
+          set PATH=%PATH:C:\msys64\mingw64\bin;=%
+          set PATH=%PATH:C:\msys64\usr\bin;=%
+          set PATH=%PATH:C:\msys64\bin;=%
+
+          echo BEFORE MSVC activation:
+          where cl
+          where gcc
+          where g++
+          echo %PATH%
+
+          choco install ninja
+
+          call "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
+
+          echo AFTER MSVC activation:
+          where cl
+          where gcc
+          where g++
+          echo %PATH%
+
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
+          cmake --build build --config Release
+
       # ---------------------------------------------------------
       # CMake (Linux + macOS)
       # ---------------------------------------------------------
