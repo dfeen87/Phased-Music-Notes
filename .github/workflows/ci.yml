@@ -31,7 +31,7 @@ jobs:
           fi
 
       # ---------------------------------------------------------
-      # JUCE Linux Dependencies (strict)
+      # JUCE Linux Dependencies
       # ---------------------------------------------------------
       - name: Install JUCE Linux dependencies
         run: |
@@ -52,7 +52,7 @@ jobs:
             pkg-config
 
       # ---------------------------------------------------------
-      # JUCE + pybind11 FETCH (strict)
+      # JUCE + pybind11 FETCH
       # ---------------------------------------------------------
       - name: Remove JUCE
         run: rm -rf drivers/JUCE
@@ -67,7 +67,7 @@ jobs:
         run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # CMake Build (strict)
+      # CMake Build
       # ---------------------------------------------------------
       - name: Install CMake
         uses: jwlawson/actions-setup-cmake@v2
@@ -81,7 +81,7 @@ jobs:
         run: cmake --build build --config Release
 
       # ---------------------------------------------------------
-      # Python Test Environment (strict)
+      # Python Test Environment
       # ---------------------------------------------------------
       - name: Install Python package
         run: pip install -e .
@@ -89,11 +89,11 @@ jobs:
       - name: Add repo to PYTHONPATH
         run: echo "PYTHONPATH=$PWD:$PWD/drivers:$PYTHONPATH" >> $GITHUB_ENV
 
-      - name: Run Python tests
-        run: pytest -q
+      - name: Run Python tests (excluding pybind11 vendor tests)
+        run: pytest -q --ignore=drivers/pybind11/tests
 
       # ---------------------------------------------------------
-      # Upload Linux VST3 Artifact (strict)
+      # Upload Linux VST3 Artifact
       # ---------------------------------------------------------
       - name: Upload Linux VST3 Artifact
         uses: actions/upload-artifact@v4
