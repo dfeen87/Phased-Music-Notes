@@ -102,7 +102,9 @@ Phased-Music-Notes/
 │    ├── test_harmonics.py
 │    ├── test_engine_integration.py
 │    └── test_utils.py
-│
+
+
+├──pyproject.toml
 ├── CMakeLists.txt
 ├── requirements.txt
 ├── LICENSE
