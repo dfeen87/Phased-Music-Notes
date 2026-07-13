@@ -25,39 +25,17 @@ jobs:
           python-version: "3.10"
           cache: 'pip'
 
-      - name: Cache CMake Build
-        uses: actions/cache@v3
-        with:
-          path: build
-          key: ${{ runner.os }}-cmake-build-${{ hashFiles('CMakeLists.txt', 'drivers/**') }}
-          restore-keys: |
-            ${{ runner.os }}-cmake-build-
-
-      - name: Cache JUCE
-        uses: actions/cache@v3
-        id: cache-juce
-        with:
-          path: drivers/JUCE
-          key: ${{ runner.os }}-juce-${{ hashFiles('.github/workflows/ci.yml') }}
-
-      - name: Cache pybind11
-        uses: actions/cache@v3
-        id: cache-pybind11
-        with:
-          path: drivers/pybind11
-          key: ${{ runner.os }}-pybind11-${{ hashFiles('.github/workflows/ci.yml') }}
-
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
 
       - name: Install Python dependencies
+        shell: bash
         run: |
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           else
             echo "No requirements.txt found, skipping."
           fi
-        shell: bash
 
       # ---------------------------------------------------------
       # JUCE Linux Dependencies
@@ -86,40 +64,37 @@ jobs:
       # ---------------------------------------------------------
       - name: Remove JUCE (Windows)
         if: matrix.os == 'windows-latest'
-        run: |
-          Remove-Item -Recurse -Force drivers/JUCE
+        run: Remove-Item -Recurse -Force drivers/JUCE
 
       - name: Remove JUCE (Linux/macOS)
         if: matrix.os != 'windows-latest'
-        run: |
-          rm -rf drivers/JUCE
+        run: rm -rf drivers/JUCE
 
       - name: Clone JUCE
-        if: steps.cache-juce.outputs.cache-hit != 'true'
-        run: |
-          git clone --depth 1 https://github.com/juce-framework/JUCE.git drivers/JUCE
+        run: git clone --depth 1 https://github.com/juce-framework/JUCE.git drivers/JUCE
 
       - name: Remove pybind11 (Windows)
         if: matrix.os == 'windows-latest'
-        run: |
-          Remove-Item -Recurse -Force drivers/pybind11
+        run: Remove-Item -Recurse -Force drivers/pybind11
 
       - name: Remove pybind11 (Linux/macOS)
         if: matrix.os != 'windows-latest'
-        run: |
-          rm -rf drivers/pybind11
+        run: rm -rf drivers/pybind11
 
       - name: Clone pybind11
-        if: steps.cache-pybind11.outputs.cache-hit != 'true'
-        run: |
-          git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
+        run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # Windows Build (Ninja + MSVC)
+      # WINDOWS BUILD — Ninja + MSVC + vsdevcmd
       # ---------------------------------------------------------
       - name: Install Ninja
         if: matrix.os == 'windows-latest'
         run: choco install ninja
+
+      - name: Activate MSVC Environment
+        if: matrix.os == 'windows-latest'
+        run: |
+          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
 
       - name: Configure CMake (Windows)
         if: matrix.os == 'windows-latest'
@@ -127,14 +102,11 @@ jobs:
           cmake -S . -B build `
             -G "Ninja" `
             -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_C_COMPILER=cl `
-            -DCMAKE_CXX_COMPILER=cl `
             -DPLUGIN_FORMATS=VST3
 
       - name: Build (Windows)
         if: matrix.os == 'windows-latest'
-        run: |
-          cmake --build build --config Release
+        run: cmake --build build --config Release
 
       # ---------------------------------------------------------
       # CMake (Linux + macOS)
@@ -149,9 +121,9 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-              cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
           else
-              cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS="VST3;AU"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS="VST3;AU"
           fi
 
       - name: Build (Linux/macOS)
@@ -159,18 +131,16 @@ jobs:
         run: cmake --build build --config Release
 
       # ---------------------------------------------------------
-      # Python Test Environment Fix
+      # Python Test Environment
       # ---------------------------------------------------------
       - name: Install Python package
         run: pip install -e .
 
       - name: Add repo to PYTHONPATH
-        run: |
-          echo "PYTHONPATH=$PWD:$PWD/drivers:$PYTHONPATH" >> $GITHUB_ENV
+        run: echo "PYTHONPATH=$PWD:$PWD/drivers:$PYTHONPATH" >> $GITHUB_ENV
 
       - name: Build pybind11 test module
-        run: |
-          cmake --build build --target pybind11_tests --config Release || true
+        run: cmake --build build --target pybind11_tests --config Release || true
 
       - name: Run Python tests
         run: pytest -q
