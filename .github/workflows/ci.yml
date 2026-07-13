@@ -85,28 +85,19 @@ jobs:
         run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # WINDOWS BUILD — Ninja + MSVC + vsdevcmd
+      # WINDOWS BUILD — CMD + MSVC + Ninja
       # ---------------------------------------------------------
       - name: Install Ninja
         if: matrix.os == 'windows-latest'
         run: choco install ninja
 
-      - name: Activate MSVC Environment
+      - name: Configure + Build (Windows)
         if: matrix.os == 'windows-latest'
+        shell: cmd
         run: |
-          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
-
-      - name: Configure CMake (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          cmake -S . -B build `
-            -G "Ninja" `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DPLUGIN_FORMATS=VST3
-
-      - name: Build (Windows)
-        if: matrix.os == 'windows-latest'
-        run: cmake --build build --config Release
+          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat" &&
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3 &&
+          cmake --build build --config Release
 
       # ---------------------------------------------------------
       # CMake (Linux + macOS)
