@@ -81,8 +81,8 @@ jobs:
       # ---------------------------------------------------------
       - name: Windows Build (Real CMD Script)
         if: matrix.os == 'windows-latest'
-        shell: cmd
-        run: scripts/windows_build.cmd
+        shell: powershell
+        run: cmd.exe /c scripts/windows_build.cmd
         
       # ---------------------------------------------------------
       # CMake (Linux + macOS)
