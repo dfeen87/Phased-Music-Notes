@@ -77,13 +77,13 @@ jobs:
         run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # WINDOWS BUILD — FLAT CMD (NO LOOPS, NO DELAYED EXPANSION)
+      # WINDOWS BUILD — DOUBLE MINGW PURGE (BEFORE + AFTER VSDevCmd)
       # ---------------------------------------------------------
       - name: Windows Build (Flat CMD)
         if: matrix.os == 'windows-latest'
         shell: cmd
         run: |
-          echo Purging MinGW...
+          echo Purging MinGW (first pass)...
           set PATH=%PATH:C:\mingw64\bin;=%
           set PATH=%PATH:C:\msys64\mingw64\bin;=%
           set PATH=%PATH:C:\msys64\usr\bin;=%
@@ -99,6 +99,13 @@ jobs:
           choco install ninja
 
           call "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
+
+          echo Purging MinGW (second pass)...
+          set PATH=%PATH:C:\mingw64\bin;=%
+          set PATH=%PATH:C:\msys64\mingw64\bin;=%
+          set PATH=%PATH:C:\msys64\usr\bin;=%
+          set PATH=%PATH:C:\msys64\bin;=%
+          set PATH=%PATH:C:\ProgramData\chocolatey\bin;=%
 
           echo AFTER MSVC activation:
           where cl
