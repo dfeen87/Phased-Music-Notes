@@ -62,48 +62,40 @@ jobs:
       # ---------------------------------------------------------
       # JUCE + pybind11 FETCH
       # ---------------------------------------------------------
-      - name: Remove JUCE (Windows)
-        if: matrix.os == 'windows-latest'
-        run: Remove-Item -Recurse -Force drivers/JUCE
-
-      - name: Remove JUCE (Linux/macOS)
-        if: matrix.os != 'windows-latest'
+      - name: Remove JUCE
         run: rm -rf drivers/JUCE
+        shell: bash
 
       - name: Clone JUCE
         run: git clone --depth 1 https://github.com/juce-framework/JUCE.git drivers/JUCE
 
-      - name: Remove pybind11 (Windows)
-        if: matrix.os == 'windows-latest'
-        run: Remove-Item -Recurse -Force drivers/pybind11
-
-      - name: Remove pybind11 (Linux/macOS)
-        if: matrix.os != 'windows-latest'
+      - name: Remove pybind11
         run: rm -rf drivers/pybind11
+        shell: bash
 
       - name: Clone pybind11
         run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # WINDOWS BUILD — CMD + MSVC + Ninja + NO MINGW
+      # WINDOWS BUILD — CMD ONLY (NO POWERSHELL)
       # ---------------------------------------------------------
-      - name: Remove MinGW from PATH
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
-        run: |
-          $env:PATH = ($env:PATH -split ';' | Where-Object { $_ -notlike "*mingw*" }) -join ';'
-          Write-Host "PATH cleaned of MinGW."
-
-      - name: Install Ninja
-        if: matrix.os == 'windows-latest'
-        run: choco install ninja
-
-      - name: Configure + Build (Windows)
+      - name: Windows Build (CMD + MSVC + Ninja + No MinGW)
         if: matrix.os == 'windows-latest'
         shell: cmd
         run: |
-          C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat
+          REM Remove MinGW from PATH
+          set PATH=%PATH:C:\mingw64\bin;=%
+
+          REM Install Ninja
+          choco install ninja
+
+          REM Activate MSVC environment
+          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
+
+          REM Configure CMake with MSVC + Ninja
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
+
+          REM Build
           cmake --build build --config Release
 
       # ---------------------------------------------------------
