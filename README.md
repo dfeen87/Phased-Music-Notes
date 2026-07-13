@@ -19,7 +19,7 @@ This project is MIT‑licensed, clone‑friendly, and designed for producers, so
 ## ✨ Features  
 - **Phase‑Aligned Note Smoothing** — reduces harsh jumps between notes  
 - **Harmonic Blending** — softens overtones for a warm, gradual sound  
-- **Boundary Detection** — identifies note transitions in audio  
+- **Boundary Detection** — identifies note transitions in audio   
 - **Soft DSP Modes** — customizable smoothing profiles  
 - **Python DSL** — expressive commands for musical shaping  
 - **Plugin‑Ready Architecture** — can be wrapped into VST/AU later  
