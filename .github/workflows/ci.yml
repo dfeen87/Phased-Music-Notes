@@ -102,8 +102,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: cmd
         run: |
-          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat" &&
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3 &&
+          C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
           cmake --build build --config Release
 
       # ---------------------------------------------------------
