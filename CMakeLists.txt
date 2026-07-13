@@ -15,6 +15,19 @@ add_subdirectory(drivers/JUCE)
 add_subdirectory(drivers/pybind11)
 
 # ================================================================
+# pybind11 test module (required for pytest)
+# ================================================================
+pybind11_add_module(pybind11_tests
+    drivers/pybind11/tests/test_module.cpp
+)
+
+target_include_directories(pybind11_tests PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/pybind11
+)
+
+target_compile_features(pybind11_tests PRIVATE cxx_std_17)
+
+# ================================================================
 # Plugin formats per OS
 # ================================================================
 if (APPLE)
