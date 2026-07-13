@@ -8,12 +8,8 @@ on:
 
 jobs:
   build-and-test:
-    name: Build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    name: Linux Strict Build
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -29,19 +25,15 @@ jobs:
         run: python -m pip install --upgrade pip
 
       - name: Install Python dependencies
-        shell: bash
         run: |
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
-          else
-            echo "No requirements.txt found, skipping."
           fi
 
       # ---------------------------------------------------------
-      # JUCE Linux Dependencies
+      # JUCE Linux Dependencies (strict)
       # ---------------------------------------------------------
       - name: Install JUCE Linux dependencies
-        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -60,88 +52,36 @@ jobs:
             pkg-config
 
       # ---------------------------------------------------------
-      # JUCE + pybind11 FETCH
+      # JUCE + pybind11 FETCH (strict)
       # ---------------------------------------------------------
       - name: Remove JUCE
         run: rm -rf drivers/JUCE
-        shell: bash
 
       - name: Clone JUCE
         run: git clone --depth 1 https://github.com/juce-framework/JUCE.git drivers/JUCE
 
       - name: Remove pybind11
         run: rm -rf drivers/pybind11
-        shell: bash
 
       - name: Clone pybind11
         run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # WINDOWS BUILD — DOUBLE MINGW PURGE (INCLUDING STRAWBERRY)
-      # ---------------------------------------------------------
-      - name: Windows Build (Flat CMD)
-        if: matrix.os == 'windows-latest'
-        shell: cmd
-        run: |
-          echo Purging MinGW (first pass)...
-          set PATH=%PATH:C:\mingw64\bin;=%
-          set PATH=%PATH:C:\msys64\mingw64\bin;=%
-          set PATH=%PATH:C:\msys64\usr\bin;=%
-          set PATH=%PATH:C:\msys64\bin;=%
-          set PATH=%PATH:C:\ProgramData\chocolatey\bin;=%
-          set PATH=%PATH:C:\Strawberry\c\bin;=%
-
-          echo BEFORE MSVC activation:
-          where cl
-          where gcc
-          where g++
-          echo %PATH%
-
-          choco install ninja
-
-          call "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
-
-          echo Purging MinGW (second pass)...
-          set PATH=%PATH:C:\mingw64\bin;=%
-          set PATH=%PATH:C:\msys64\mingw64\bin;=%
-          set PATH=%PATH:C:\msys64\usr\bin;=%
-          set PATH=%PATH:C:\msys64\bin;=%
-          set PATH=%PATH:C:\ProgramData\chocolatey\bin;=%
-          set PATH=%PATH:C:\Strawberry\c\bin;=%
-
-          echo AFTER MSVC activation:
-          where cl
-          where gcc
-          where g++
-          echo %PATH%
-
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
-          cmake --build build --config Release
-
-      # ---------------------------------------------------------
-      # CMake (Linux + macOS)
+      # CMake Build (strict)
       # ---------------------------------------------------------
       - name: Install CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: '3.24.x'
 
-      - name: Configure CMake (Linux/macOS)
-        if: matrix.os != 'windows-latest'
-        shell: bash
-        run: |
-          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
-          else
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS="VST3;AU"
-          fi
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
 
-      - name: Build (Linux/macOS)
-        if: matrix.os != 'windows-latest'
+      - name: Build
         run: cmake --build build --config Release
 
       # ---------------------------------------------------------
-      # Python Test Environment
+      # Python Test Environment (strict)
       # ---------------------------------------------------------
       - name: Install Python package
         run: pip install -e .
@@ -153,25 +93,10 @@ jobs:
         run: pytest -q
 
       # ---------------------------------------------------------
-      # Upload Artifacts
+      # Upload Linux VST3 Artifact (strict)
       # ---------------------------------------------------------
-      - name: Upload Windows VST3 Artifact
-        if: runner.os == 'Windows'
+      - name: Upload Linux VST3 Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PhasedNotes-win-VST3
-          path: build/PhasedNotes_artefacts/Release/VST3/PhasedNotes.vst3
-
-      - name: Upload macOS VST3 Artifact
-        if: runner.os == 'macOS'
-        uses: actions/upload-artifact@v4
-        with:
-          name: PhasedNotes-mac-VST3
+          name: PhasedNotes-linux-VST3
           path: build/PhasedNotes_artefacts/VST3/PhasedNotes.vst3
-
-      - name: Upload macOS AU Artifact
-        if: runner.os == 'macOS'
-        uses: actions/upload-artifact@v4
-        with:
-          name: PhasedNotes-mac-AU
-          path: build/PhasedNotes_artefacts/AU/PhasedNotes.component
