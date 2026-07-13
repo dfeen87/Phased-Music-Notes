@@ -77,14 +77,14 @@ jobs:
         run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # WINDOWS BUILD — CMD ONLY (FULL MINGW/MSYS PURGE)
+      # WINDOWS BUILD — CMD.EXE ONLY (FULL MINGW/MSYS PURGE)
       # ---------------------------------------------------------
       - name: Windows Build (CMD + MSVC + Ninja + No MinGW)
         if: matrix.os == 'windows-latest'
-        shell: cmd
+        shell: cmd.exe
         run: |
           REM =====================================================
-          REM Remove ALL MinGW/MSYS paths (GitHub runner injects many)
+          REM Remove ALL MinGW/MSYS paths
           REM =====================================================
           for %%i in (
             C:\mingw64\bin
@@ -157,9 +157,6 @@ jobs:
 
       - name: Add repo to PYTHONPATH
         run: echo "PYTHONPATH=$PWD:$PWD/drivers:$PYTHONPATH" >> $GITHUB_ENV
-
-      - name: Build pybind11 test module
-        run: cmake --build build --target pybind11_tests --config Release || true
 
       - name: Run Python tests
         run: pytest -q
