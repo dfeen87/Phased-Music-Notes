@@ -115,11 +115,11 @@ jobs:
           git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # Windows Toolchain Setup
+      # Windows Toolchain Setup (VS Build Tools)
       # ---------------------------------------------------------
-      - name: Setup MSBuild
+      - name: Install Visual Studio Build Tools
         if: matrix.os == 'windows-latest'
-        uses: microsoft/setup-msbuild@v1.3.1
+        uses: microsoft/setup-vsbuildtools@v1
 
       - name: Configure CMake (Windows)
         if: matrix.os == 'windows-latest'
