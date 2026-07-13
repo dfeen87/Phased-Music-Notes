@@ -77,55 +77,57 @@ jobs:
         run: git clone --depth 1 https://github.com/pybind/pybind11.git drivers/pybind11
 
       # ---------------------------------------------------------
-      # WINDOWS BUILD — CMD.EXE ONLY (FULL MINGW/MSYS PURGE)
+      # WINDOWS BUILD — REAL CMD (cmd /C) + FULL MINGW/MSYS PURGE
       # ---------------------------------------------------------
-      - name: Windows Build (CMD + MSVC + Ninja + No MinGW)
+      - name: Windows Build (Real CMD + MSVC + Ninja + No MinGW)
         if: matrix.os == 'windows-latest'
-        shell: cmd.exe
+        shell: cmd
         run: |
-          REM =====================================================
-          REM Remove ALL MinGW/MSYS paths
-          REM =====================================================
-          for %%i in (
-            C:\mingw64\bin
-            C:\msys64\mingw64\bin
-            C:\msys64\usr\bin
-            C:\msys64\bin
-          ) do (
-            set "PATH=%PATH:%%i;=%"
-          )
+          cmd /C "
+            REM =====================================================
+            REM Remove ALL MinGW/MSYS paths
+            REM =====================================================
+            for %%i in (
+              C:\mingw64\bin
+              C:\msys64\mingw64\bin
+              C:\msys64\usr\bin
+              C:\msys64\bin
+            ) do (
+              set PATH=!PATH:%%i;=!
+            )
 
-          REM Diagnostics BEFORE MSVC activation
-          echo BEFORE MSVC activation:
-          where cl
-          where gcc
-          where g++
-          echo PATH:
-          echo %PATH%
+            REM Diagnostics BEFORE MSVC activation
+            echo BEFORE MSVC activation:
+            where cl
+            where gcc
+            where g++
+            echo PATH:
+            echo %PATH%
 
-          REM Install Ninja
-          choco install ninja
+            REM Install Ninja
+            choco install ninja
 
-          REM =====================================================
-          REM Activate MSVC environment
-          REM =====================================================
-          "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
+            REM =====================================================
+            REM Activate MSVC environment
+            REM =====================================================
+            \"C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat\"
 
-          REM Diagnostics AFTER MSVC activation
-          echo AFTER MSVC activation:
-          where cl
-          where gcc
-          where g++
-          echo PATH:
-          echo %PATH%
+            REM Diagnostics AFTER MSVC activation
+            echo AFTER MSVC activation:
+            where cl
+            where gcc
+            where g++
+            echo PATH:
+            echo %PATH%
 
-          REM =====================================================
-          REM Configure CMake with MSVC + Ninja
-          REM =====================================================
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
+            REM =====================================================
+            REM Configure CMake with MSVC + Ninja
+            REM =====================================================
+            cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DPLUGIN_FORMATS=VST3
 
-          REM Build
-          cmake --build build --config Release
+            REM Build
+            cmake --build build --config Release
+          "
 
       # ---------------------------------------------------------
       # CMake (Linux + macOS)
