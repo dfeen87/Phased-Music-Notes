@@ -47,8 +47,7 @@ class PhasedNotesBeamDoFn(BeamDoFn):
         Process an element in the Beam pipeline.
 
         If element is a numpy array, process directly.
-        If element is a dictionary, expect 'audio' key and optionally 'sr'.
-        """
+        If element is a dictionary, expect an 'audio' key.
         if self.buffer_processor is None:
             self.setup()
 
