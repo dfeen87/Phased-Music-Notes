@@ -25,8 +25,10 @@ def grpc_test_server():
     port = get_free_port()
     server = grpc_server.serve(port=port)
 
-    # Wait a moment for server to start
-    time.sleep(0.1)
+    # Wait for server to start accepting connections
+    channel = grpc.insecure_channel(f"localhost:{port}")
+    grpc.channel_ready_future(channel).result(timeout=5)
+    channel.close()
 
     yield "localhost", port
 
