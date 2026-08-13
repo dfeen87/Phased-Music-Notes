@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package audio_processor;
+
+service AudioProcessor {
+  // Process a single complete block of audio
+  rpc SmoothBlock (SmoothBlockRequest) returns (SmoothBlockResponse);
+
+  // Bidirectional stream of real-time audio chunks for AI-DJ
+  rpc SmoothAudioStream (stream AudioStreamChunk) returns (stream AudioStreamChunk);
+}
+
+message SmoothBlockRequest {
+  bytes audio_data = 1;     // Float32 raw binary audio data
+  int32 sample_rate = 2;
+  int32 channels = 3;       // 1 = mono, 2 = stereo
+  string mode = 4;          // "velvet", "legato", "melt"
+}
+
+message SmoothBlockResponse {
+  bytes audio_data = 1;     // Processed Float32 raw binary audio data
+  int32 sample_rate = 2;
+  int32 channels = 3;
+}
+
+message AudioStreamChunk {
+  bytes audio_data = 1;     // Float32 raw binary chunk data
+  int32 sample_rate = 2;
+  int32 channels = 3;       // 1 = mono, 2 = stereo
+  string mode = 4;          // "velvet", "legato", "melt"
+  bool end_of_stream = 5;
+}
