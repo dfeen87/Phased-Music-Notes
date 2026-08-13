@@ -1,4 +1,5 @@
-# Phased‑Music‑Notes  
+# Phased‑Music‑Notes
+
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Status](https://img.shields.io/badge/Status-Production--Ready-white)
@@ -61,65 +62,6 @@ Modes you might implement:
 - `"velvet"` — softens transients  
 - `"legato"` — glides pitch transitions  
 - `"melt"` — blends harmonic overtones  
-
----
-
-## 📁 Project Structure  
-```
-Phased-Music-Notes/
-│
-├── src/
-│   └── main.py              ← core engine (AeroCam-style)
-│
-├── phased_music_notes/
-│   ├── analyzer.py
-│   ├── smoother.py
-│   ├── harmonics.py
-│   ├── dsl.py
-│   └── utils.py
-│
-├── drivers/
-│   ├── cli.py
-│   ├── api.py
-│   └── vst/
-│       ├── PluginProcessor.cpp
-│       ├── PluginProcessor.h
-│       ├── PluginEditor.cpp
-│       ├── PluginEditor.h
-│       ├── python_bridge.cpp
-│       └── python_bridge.hpp
-│ 
-├── examples/
-│       ├── smooth_file.py
-│       ├── smooth_buffer.py
-│       ├── compare_modes.py
-│       └── vst_debug_roundtrip.py
-│
-├──tests/
-│    │
-│    ├── test_analyzer.py
-│    ├── test_smoother.py
-│    ├── test_harmonics.py
-│    ├── test_engine_integration.py
-│    └── test_utils.py
-│
-├── setup.cfg
-├── pyproject.toml
-├── CMakeLists.txt
-├── requirements.txt
-├── LICENSE
-└── README.md
-
-```
-
----
-
-## 🧪 Roadmap  
-- **Add more smoothing modes**  
-- **Implement real‑time processing**  
-- **Create a VST/AU wrapper**  
-- **Add visualization tools**  
-- **Publish pip package**  
 
 ---
 
