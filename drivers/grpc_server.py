@@ -45,6 +45,7 @@ class AudioProcessorServicer(audio_processor_pb2_grpc.AudioProcessorServicer):
                     return audio_processor_pb2.SmoothBlockResponse()
                 # Stereo input -> reshape to (num_samples, 2)
                 stereo = raw_data.reshape(-1, 2)
+            else:
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 context.set_details(f"Unsupported channel count: {request.channels}")
                 return audio_processor_pb2.SmoothBlockResponse()
