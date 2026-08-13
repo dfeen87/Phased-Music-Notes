@@ -146,8 +146,10 @@ def serve(port: int = 50051) -> grpc.Server:
     health_servicer.set("", health_pb2.HealthCheckResponse.SERVING)
     health_servicer.set("audio_processor.AudioProcessor", health_pb2.HealthCheckResponse.SERVING)
 
-    server.add_insecure_port(f"[::]:{port}")
-    logging.info(f"Starting Phased-Music-Notes gRPC server on port {port}...")
+    bound_port = server.add_insecure_port(f"[::]:{port}")
+    if bound_port == 0:
+        raise RuntimeError(f"Failed to bind gRPC server to port {port}")
+    logging.info(f"Starting Phased-Music-Notes gRPC server on port {bound_port}...")
     server.start()
     return server
 
