@@ -35,8 +35,10 @@ def smooth_block_grpc(audio: np.ndarray, mode: str = "velvet", sr: int = 44100, 
         processed = np.frombuffer(response.audio_data, dtype=np.float32)
         if response.channels == 2:
             processed = processed.reshape(-1, 2)
+        channel.close()
         return processed
     except grpc.RpcError as e:
+        channel.close()
         print(f"gRPC Error: {e.code()} - {e.details()}", file=sys.stderr)
         raise
 
