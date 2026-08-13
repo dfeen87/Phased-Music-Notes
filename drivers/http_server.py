@@ -71,5 +71,5 @@ async def smooth_audio(
         logging.error(f"Error processing audio in /smooth: {e}", exc_info=True)
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"error": "DSP processing failed", "details": str(e)}
+            content={"error": "DSP processing failed"}
         )
