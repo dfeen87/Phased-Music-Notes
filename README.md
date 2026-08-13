@@ -1,5 +1,5 @@
-# Phased‑Music‑Notes
-
+# Phased‑Music‑Notes Repository for ISLA
+## ISLA Audio Engineering focus is to Smooth Audio Notes with phase‑aligned transitions for cleaner, more natural musical flow.
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Status](https://img.shields.io/badge/Status-Production--Ready-white)
@@ -14,6 +14,8 @@
 Phased‑Music‑Notes is a lightweight Python DSP engine that creates **phase‑aligned, gradual transitions between musical notes**. It analyzes note boundaries, blends harmonic structure, and softens abrupt changes to produce smoother, more expressive continuity in any audio track.
 
 This project is MIT‑licensed, clone‑friendly, and designed for producers, sound designers, and developers who want a simple, innovative tool for **gentle note transitions** and **soft harmonic movement**.
+
+ISLA is a baby girl recently born in Los Angeles. Don Feeney creator of this Repo is now an Uncle. For all that want to contribute meaningfully to dedicate this specific sound engineering to be called: ISLA
 
 ---
 
