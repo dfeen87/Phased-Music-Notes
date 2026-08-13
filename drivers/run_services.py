@@ -44,8 +44,20 @@ if __name__ == "__main__":
     logging.info("Both Phased-Music-Notes services started successfully.")
 
     try:
-        p1.join()
-        p2.join()
+        while True:
+            p1.join(timeout=0.5)
+            p2.join(timeout=0.5)
+
+            if not p1.is_alive() or not p2.is_alive():
+                if p1.exitcode not in (None, 0):
+                    logging.error(f"HTTP server exited with code {p1.exitcode}; stopping gRPC server.")
+                if p2.exitcode not in (None, 0):
+                    logging.error(f"gRPC server exited with code {p2.exitcode}; stopping HTTP server.")
+                p1.terminate()
+                p2.terminate()
+                p1.join(timeout=5)
+                p2.join(timeout=5)
+                sys.exit(p1.exitcode or p2.exitcode or 1)
     except KeyboardInterrupt:
         logging.info("Terminating services...")
         p1.terminate()
