@@ -57,7 +57,7 @@ class PhaseSmoother:
     # -------------------------------------------------------------
     # Core smoothing entry point
     # -------------------------------------------------------------
-    def apply(self, audio: np.ndarray, boundaries: List[int]) -> np.ndarray:
+    def apply(self, audio: np.ndarray, boundaries: List[int], sr: int = 44100) -> np.ndarray:
         """
         Apply smoothing across detected note boundaries.
 
@@ -67,6 +67,8 @@ class PhaseSmoother:
             Audio buffer (mono or stereo).
         boundaries : list[int]
             Sample indices where note transitions occur.
+        sr : int
+            Audio sample rate in Hz.
 
         Returns
         -------
@@ -74,21 +76,26 @@ class PhaseSmoother:
             Smoothed audio buffer.
         """
 
+        if sr <= 0:
+            raise ValueError("Sample rate must be positive.")
+
         if audio.ndim == 1:
-            return self._smooth_mono(audio, boundaries)
+            return self._smooth_mono(audio, boundaries, sr)
         elif audio.ndim == 2:
-            return self._smooth_stereo(audio, boundaries)
+            return self._smooth_stereo(audio, boundaries, sr)
         else:
             raise ValueError("Audio must be mono or stereo.")
 
     # -------------------------------------------------------------
     # Mono smoothing
     # -------------------------------------------------------------
-    def _smooth_mono(self, audio: np.ndarray, boundaries: List[int]) -> np.ndarray:
+    def _smooth_mono(self, audio: np.ndarray, boundaries: List[int], sr: int = 44100) -> np.ndarray:
         out = audio.copy()
-        blend_samples = self._ms_to_samples(self.cfg["blend_ms"])
+        blend_samples = self._ms_to_samples(self.cfg["blend_ms"], sr)
 
         for b in boundaries:
+            if not 0 < b < len(audio):
+                continue
             start = max(0, b - blend_samples)
             end = min(len(audio), b + blend_samples)
 
@@ -116,12 +123,11 @@ class PhaseSmoother:
     # -------------------------------------------------------------
     # Stereo smoothing
     # -------------------------------------------------------------
-    def _smooth_stereo(self, audio: np.ndarray, boundaries: List[int]) -> np.ndarray:
+    def _smooth_stereo(self, audio: np.ndarray, boundaries: List[int], sr: int = 44100) -> np.ndarray:
         out = audio.copy()
-        blend_samples = self._ms_to_samples(self.cfg["blend_ms"])
 
         for ch in range(audio.shape[1]):
-            out[:, ch] = self._smooth_mono(out[:, ch], boundaries)
+            out[:, ch] = self._smooth_mono(out[:, ch], boundaries, sr)
 
         return out
 

@@ -86,3 +86,16 @@ def test_harmonic_blender_stereo():
     mask = mag_in > (peak_mag * 0.1)
     phase_diff = np.abs(np.angle(np.exp(1j * (phase_in[mask] - phase_out[mask]))))
     assert np.max(phase_diff) < 0.25
+
+
+def test_harmonic_blender_handles_empty_and_short_audio():
+    blender = HarmonicBlender()
+
+    empty = np.array([], dtype=np.float32)
+    np.testing.assert_array_equal(blender.blend(empty, 44100), empty)
+
+    short = np.ones(32, dtype=np.float32)
+    assert blender.blend(short, 44100).shape == short.shape
+
+    integer_stereo = np.ones((32, 2), dtype=np.int16)
+    assert np.issubdtype(blender.blend(integer_stereo, 44100).dtype, np.floating)

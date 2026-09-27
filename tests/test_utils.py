@@ -74,3 +74,17 @@ def test_ms_to_samples():
 
     samples = ms_to_samples(500.0, sr)
     assert samples == 22050
+
+
+def test_short_framing_and_general_overlap_add_shape():
+    frames = frame_audio(np.ones(3), frame_size=8, hop_size=3)
+    assert frames.shape == (1, 8)
+    np.testing.assert_array_equal(frames[0, 3:], np.zeros(5))
+
+    reconstructed = overlap_add(np.ones((2, 8)), hop_size=3)
+    assert reconstructed.shape == (11,)
+
+
+def test_normalize_empty_audio():
+    empty = np.array([], dtype=np.float32)
+    np.testing.assert_array_equal(normalize(empty), empty)

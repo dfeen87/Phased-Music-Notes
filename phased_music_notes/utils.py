@@ -25,6 +25,8 @@ def normalize(audio: np.ndarray) -> np.ndarray:
     """
     Normalize audio to -1..1 range without clipping.
     """
+    if audio.size == 0:
+        return audio.copy()
     peak = np.max(np.abs(audio)) + 1e-9
     return audio / peak
 
@@ -90,13 +92,20 @@ def frame_audio(audio: np.ndarray, frame_size: int, hop_size: int) -> np.ndarray
     """
     Frame audio into overlapping windows.
     """
-    num_frames = 1 + (len(audio) - frame_size) // hop_size
+    if frame_size <= 0 or hop_size <= 0:
+        raise ValueError("frame_size and hop_size must be positive")
+    if len(audio) == 0:
+        return np.empty((0, frame_size), dtype=np.float32)
+
+    remaining = max(0, len(audio) - frame_size)
+    num_frames = 1 + (remaining + hop_size - 1) // hop_size
     frames = np.zeros((num_frames, frame_size), dtype=np.float32)
 
     for i in range(num_frames):
         start = i * hop_size
         end = start + frame_size
-        frames[i] = audio[start:end]
+        chunk = audio[start:end]
+        frames[i, :len(chunk)] = chunk
 
     return frames
 
@@ -105,8 +114,15 @@ def overlap_add(frames: np.ndarray, hop_size: int) -> np.ndarray:
     """
     Reconstruct audio from overlapping frames.
     """
+    if frames.ndim != 2:
+        raise ValueError("frames must be a two-dimensional array")
+    if hop_size <= 0:
+        raise ValueError("hop_size must be positive")
+    if frames.shape[0] == 0:
+        return np.empty(0, dtype=np.float32)
+
     frame_size = frames.shape[1]
-    out_len = hop_size * (frames.shape[0] + 1)
+    out_len = hop_size * (frames.shape[0] - 1) + frame_size
     out = np.zeros(out_len, dtype=np.float32)
 
     for i, frame in enumerate(frames):

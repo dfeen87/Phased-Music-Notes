@@ -115,7 +115,7 @@ class PhasedNotesBuffer:
         boundaries = self.engine.analyzer.detect_boundaries(audio_buffer, self.sr)
 
         # Step 2: Apply smoothing per boundary region
-        softened = self.engine.smoother.apply(audio_buffer, boundaries)
+        softened = self.engine.smoother.apply(audio_buffer, boundaries, self.sr)
 
         # Step 3: Blend harmonics for gradual transitions
         final_output = self.engine.harmonics.blend(softened, self.sr)

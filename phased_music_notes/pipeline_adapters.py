@@ -125,7 +125,9 @@ class PhasedNotesLuigiTask(LuigiTask):
         output_target = self.output()
 
         # Create output directory if it doesn't exist
-        os.makedirs(os.path.dirname(output_target.path), exist_ok=True)
+        output_dir = os.path.dirname(output_target.path)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
 
         processor = PhasedNotes(mode=self.mode)
         processor.process(input_target.path, output_target.path)

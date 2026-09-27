@@ -53,3 +53,10 @@ def test_detect_boundaries_stereo():
     for expected in expected_boundaries:
         assert any(abs(b - expected) <= tolerance for b in boundaries), \
             f"Expected boundary at {expected} not found within {tolerance} samples in stereo. Detected: {boundaries}"
+
+
+def test_detect_boundaries_handles_empty_and_short_audio():
+    analyzer = NoteAnalyzer()
+
+    assert analyzer.detect_boundaries(np.array([]), 44100) == []
+    assert analyzer.detect_boundaries(np.ones(32), 44100) == []

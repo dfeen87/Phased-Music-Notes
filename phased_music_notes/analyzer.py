@@ -62,7 +62,12 @@ class NoteAnalyzer:
             Sample indices where note transitions occur.
         """
 
-        mono = self._to_mono(audio)
+        if sr <= 0:
+            raise ValueError("Sample rate must be positive.")
+
+        mono = self._to_mono(np.asarray(audio))
+        if mono.size == 0:
+            return []
 
         frames = self._frame_audio(mono, sr)
         flux = self._spectral_flux(frames)
@@ -80,7 +85,9 @@ class NoteAnalyzer:
     def _to_mono(audio: np.ndarray) -> np.ndarray:
         if audio.ndim == 1:
             return audio
-        return audio.mean(axis=1)
+        if audio.ndim == 2:
+            return audio.mean(axis=1)
+        raise ValueError("Audio must be mono or stereo.")
 
     # -------------------------------------------------------------
     # Framing
@@ -89,13 +96,18 @@ class NoteAnalyzer:
         frame_len = self._ms_to_samples(self.frame_ms, sr)
         hop_len = self._ms_to_samples(self.hop_ms, sr)
 
-        num_frames = 1 + (len(audio) - frame_len) // hop_len
+        if frame_len <= 0 or hop_len <= 0:
+            raise ValueError("Frame and hop sizes must be at least one sample.")
+
+        remaining = max(0, len(audio) - frame_len)
+        num_frames = 1 + (remaining + hop_len - 1) // hop_len
         frames = np.zeros((num_frames, frame_len), dtype=np.float32)
 
         for i in range(num_frames):
             start = i * hop_len
             end = start + frame_len
-            frames[i] = audio[start:end]
+            chunk = audio[start:end]
+            frames[i, :len(chunk)] = chunk
 
         return frames
 

@@ -102,6 +102,10 @@ class AudioProcessorServicer(audio_processor_pb2_grpc.AudioProcessorServicer):
                     mono = raw_data
                     stereo = np.column_stack((mono, mono))
                 elif chunk.channels == 2:
+                    if raw_data.size % 2 != 0:
+                        context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                        context.set_details("Stereo audio_data must contain an even number of float32 samples")
+                        return
                     stereo = raw_data.reshape(-1, 2)
                 else:
                     context.set_code(grpc.StatusCode.INVALID_ARGUMENT)

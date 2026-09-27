@@ -38,7 +38,7 @@ class PhasedMusicEngine:
         boundaries = self.analyzer.detect_boundaries(audio, sr)
 
         # Step 2: Apply smoothing per boundary region
-        softened = self.smoother.apply(audio, boundaries)
+        softened = self.smoother.apply(audio, boundaries, sr)
 
         # Step 3: Blend harmonics for gradual transitions
         final_output = self.harmonics.blend(softened, sr)
