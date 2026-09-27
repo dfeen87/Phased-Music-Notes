@@ -99,6 +99,8 @@ def frame_audio(audio: np.ndarray, frame_size: int, hop_size: int) -> np.ndarray
 
     remaining = max(0, len(audio) - frame_size)
     num_frames = 1 + (remaining + hop_size - 1) // hop_size
+    max_frames_with_audio = 1 + (len(audio) - 1) // hop_size
+    num_frames = min(num_frames, max_frames_with_audio)
     frames = np.zeros((num_frames, frame_size), dtype=np.float32)
 
     for i in range(num_frames):
