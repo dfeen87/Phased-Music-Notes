@@ -63,19 +63,27 @@ class HarmonicBlender:
             Harmonic-blended audio buffer.
         """
 
+        audio = np.asarray(audio)
+        if sr <= 0:
+            raise ValueError("Sample rate must be positive.")
+        if audio.ndim not in (1, 2):
+            raise ValueError("Audio must be mono or stereo.")
+        if audio.shape[0] == 0:
+            return audio.copy()
+
         if audio.ndim == 1:
             return self._blend_mono(audio, sr)
         elif audio.ndim == 2:
             return self._blend_stereo(audio, sr)
-        else:
-            raise ValueError("Audio must be mono or stereo.")
 
     # -------------------------------------------------------------
     # Mono processing
     # -------------------------------------------------------------
     def _blend_mono(self, audio: np.ndarray, sr: int) -> np.ndarray:
         win = self._hann_window(sr)
-        hop = win.size // 2
+        if win.size < 2:
+            raise ValueError("window_ms is too small for the sample rate.")
+        hop = max(1, win.size // 2)
 
         # STFT
         frames = self._frame_audio(audio, hop, win.size)
@@ -103,7 +111,7 @@ class HarmonicBlender:
     # Stereo processing
     # -------------------------------------------------------------
     def _blend_stereo(self, audio: np.ndarray, sr: int) -> np.ndarray:
-        out = np.zeros_like(audio)
+        out = np.zeros(audio.shape, dtype=np.result_type(audio.dtype, np.float32))
         for ch in range(audio.shape[1]):
             out[:, ch] = self._blend_mono(audio[:, ch], sr)
         return out
@@ -133,20 +141,22 @@ class HarmonicBlender:
     # -------------------------------------------------------------
     @staticmethod
     def _frame_audio(audio: np.ndarray, hop: int, win: int) -> np.ndarray:
-        num_frames = 1 + (len(audio) - win) // hop
+        remaining = max(0, len(audio) - win)
+        num_frames = 1 + (remaining + hop - 1) // hop
         frames = np.zeros((num_frames, win), dtype=np.float32)
 
         for i in range(num_frames):
             start = i * hop
             end = start + win
-            frames[i] = audio[start:end]
+            chunk = audio[start:end]
+            frames[i, :len(chunk)] = chunk
 
         return frames
 
     @staticmethod
     def _overlap_add(frames: np.ndarray, hop: int) -> np.ndarray:
         win = frames.shape[1]
-        out_len = hop * (frames.shape[0] + 1)
+        out_len = hop * (frames.shape[0] - 1) + win
         out = np.zeros(out_len, dtype=np.float32)
 
         for i, frame in enumerate(frames):

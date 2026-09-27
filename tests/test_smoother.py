@@ -131,8 +131,21 @@ def test_smoother_stereo(mode):
                 phase_orig = np.angle(np.fft.rfft(signal_stereo[-right_frame_len:, ch] * win))
                 phase_smooth = np.angle(np.fft.rfft(smoothed[-right_frame_len:, ch] * win))
 
-                np.testing.assert_allclose(
-                    phase_orig, phase_smooth,
-                    atol=1e-5,
-                    err_msg=f"Phase angle corrupted in untouched right region for channel {ch}"
-                )
+            np.testing.assert_allclose(
+                phase_orig, phase_smooth,
+                atol=1e-5,
+                err_msg=f"Phase angle corrupted in untouched right region for channel {ch}"
+            )
+
+
+def test_smoother_uses_requested_sample_rate_and_ignores_invalid_boundaries():
+    smoother = PhaseSmoother(mode="velvet")
+    signal = np.concatenate((np.zeros(1000), np.ones(1000)))
+
+    smoothed = smoother.apply(signal, [-1, 1000, len(signal)], sr=1000)
+
+    expected_width = smoother._ms_to_samples(smoother.cfg["blend_ms"], 1000)
+    changed = np.flatnonzero(smoothed != signal)
+    # The zero-valued first point of the curve leaves the outermost sample intact.
+    assert changed[0] == 1000 - expected_width + 1
+    assert changed[-1] == 1000 + expected_width - 1
