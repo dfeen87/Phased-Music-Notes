@@ -101,6 +101,8 @@ class NoteAnalyzer:
 
         remaining = max(0, len(audio) - frame_len)
         num_frames = 1 + (remaining + hop_len - 1) // hop_len
+        max_frames_with_audio = 1 + (len(audio) - 1) // hop_len
+        num_frames = min(num_frames, max_frames_with_audio)
         frames = np.zeros((num_frames, frame_len), dtype=np.float32)
 
         for i in range(num_frames):

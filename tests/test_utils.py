@@ -85,6 +85,12 @@ def test_short_framing_and_general_overlap_add_shape():
     assert reconstructed.shape == (11,)
 
 
+def test_frame_audio_does_not_start_frames_past_the_input():
+    frames = frame_audio(np.ones(20), frame_size=10, hop_size=100)
+
+    assert frames.shape == (1, 10)
+
+
 def test_normalize_empty_audio():
     empty = np.array([], dtype=np.float32)
     np.testing.assert_array_equal(normalize(empty), empty)

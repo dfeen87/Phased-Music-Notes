@@ -60,3 +60,13 @@ def test_detect_boundaries_handles_empty_and_short_audio():
 
     assert analyzer.detect_boundaries(np.array([]), 44100) == []
     assert analyzer.detect_boundaries(np.ones(32), 44100) == []
+
+
+def test_hop_larger_than_clip_does_not_create_phantom_frame():
+    analyzer = NoteAnalyzer(frame_ms=10, hop_ms=100, sensitivity=1.5)
+    audio = np.ones(20)
+
+    frames = analyzer._frame_audio(audio, sr=1000)
+
+    assert frames.shape == (1, 10)
+    assert analyzer.detect_boundaries(audio, sr=1000) == []
