@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(PhasedNotes VERSION 1.0.0)
+project(PhasedNotes VERSION 2.1.0)
 
 # ================================================================
 # Disable VST2 BEFORE JUCE is added
