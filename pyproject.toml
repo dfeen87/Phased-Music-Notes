@@ -1,6 +1,6 @@
 [project]
 name = "phased-music-notes"
-version = "1.1.0"
+version = "2.1.0"
 description = "DSP + Python bridge for Phased Music Notes"
 requires-python = ">=3.10"
 
